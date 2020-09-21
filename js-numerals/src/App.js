@@ -1,8 +1,15 @@
-import React from "react";
-import Input from "./components/Input/Input";
+import React, { useRef } from "react";
+import Form from "./components/Form/Form";
+import ResultDisplay from "./components/Result.js/ResultDisplay";
 
 function App() {
-  return <Input />;
+  const displayRef = useRef(null);
+  return (
+    <>
+      <Form displayRef={displayRef} />{" "}
+      <ResultDisplay elementRef={displayRef}></ResultDisplay>
+    </>
+  );
 }
 
 export default App;
