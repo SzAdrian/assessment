@@ -11,9 +11,14 @@ const FormStyle = styled.form`
   * {
     outline: none;
     border: 0.2rem solid rgb(26 188 156 / 16%);
-    font-family: "Work Sans", sans-serif;
   }
-  input[type="number"]::-webkit-inner-spin-button {
+  input[type="number"] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
   }
 
