@@ -68,11 +68,13 @@ export function NumberToText(number) {
     //this part is to match the example's conversion: 1999 == nineteen hundred and ninety-nine
     const isSecondChunk = chunkIndex === 1;
     const isFirstChunkHundredsPlaceValueNotZero = numbersList[0][0] != 0;
-    const isChunkOnlyOneNumber = chunk.filter((e) => e != 0).length === 1;
+    const hasChunkOnlyOnes = chunk.reduce((prev, curr, index) => {
+      return prev === false && curr != 0 && index == 0;
+    }, false);
     if (
       isSecondChunk &&
       isFirstChunkHundredsPlaceValueNotZero &&
-      isChunkOnlyOneNumber
+      hasChunkOnlyOnes
     ) {
       let tensFirtPart = chunk[0];
       let tensSecondPart = numbersList[0][0];
