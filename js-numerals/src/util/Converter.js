@@ -1,9 +1,10 @@
 let numbers = require("../data/numbers.json");
 const NOT_A_NUMBER_ERROR = (n) => `"${n}" is not a number`;
 export function NumberToText(number) {
+  const originalInput = number;
+
   //handling not number and zero
   try {
-    const originalInput = number;
     number = number.toString();
     number = number.replace(/[n\s]/g, "");
     if (number == "" || Number(number) % 1 !== 0)
