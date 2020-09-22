@@ -1,9 +1,19 @@
 let numbers = require("../data/numbers.json");
-
+const NOT_A_NUMBER_ERROR = (n) => `"${n}" is not a number`;
 export function NumberToText(number) {
-  let isPositive = number >= 0;
-  number = number.toString();
+  //handling not number and zero
+  try {
+    const originalInput = number;
+    number = number.toString();
+    number = number.replace(/[n\s]/g, "");
+    if (number == "" || Number(number) % 1 !== 0)
+      return NOT_A_NUMBER_ERROR(originalInput);
+    else if (Number(number) == 0) return "zero";
+  } catch (error) {
+    return NOT_A_NUMBER_ERROR(originalInput);
+  }
 
+  let isPositive = number >= 0;
   //removing "-" from the start if negative
   if (!isPositive) {
     number = number.substring(1);
@@ -11,10 +21,6 @@ export function NumberToText(number) {
 
   //deleting zeros from the start
   number = number.replace(/^0+/g, "");
-  //handling 0
-  if (number == "") {
-    return "zero";
-  }
 
   //reversing to start the iterating from the "back"
   let numbersList = number
