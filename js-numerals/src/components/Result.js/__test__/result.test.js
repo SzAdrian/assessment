@@ -33,11 +33,13 @@ describe("test with specific numbers", () => {
   each([
     [0, "zero"],
     [1, "one"],
-    [100000, "one hundred thousand"],
-    [1500, "fifteen hundred"],
+    [55, "fifty-five"],
     [400, "four hundred"],
+    [1500, "fifteen hundred"],
+    [35000, "thirty-five thousand"],
+    [100000, "one hundred thousand"],
     [1500000, "one million five hundred thousand"],
-    [300500, "three hundred thousand five hundred"],
+    [300500900, "three hundred million five hundred thousand nine hundred"],
   ]).it("when the input is %s", (number, expected) => {
     const { getByTestId } = render(<ResultDisplay />);
     getByTestId("result").innerHTML = NumberToText(number);
