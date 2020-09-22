@@ -10,8 +10,7 @@ function App() {
   return (
     <>
       <Title title={"Number to Text Converter"} />
-      <Form displayRef={displayRef} />{" "}
-      <ResultDisplay elementRef={displayRef}></ResultDisplay>
+      <Form displayRef={displayRef} /> <ResultDisplay elementRef={displayRef} />
     </>
   );
 }
