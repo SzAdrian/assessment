@@ -17,7 +17,11 @@ const DisplayStyle = styled.div`
   }
 `;
 function ResultDisplay({ elementRef }) {
-  return <DisplayStyle ref={elementRef}>Enter a Number</DisplayStyle>;
+  return (
+    <DisplayStyle data-testid="result" ref={elementRef}>
+      Enter a Number
+    </DisplayStyle>
+  );
 }
 
 export default ResultDisplay;

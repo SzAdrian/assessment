@@ -69,13 +69,14 @@ function Form({ displayRef }) {
   return (
     <FormStyle inputValue={number} onSubmit={handleSubmit}>
       <input
+        data-testid="input"
         className="number-input"
         onChange={handleChange}
         value={number}
         type="number"
         step={1}
       />
-      <button className="submit-btn" type="submit">
+      <button data-testid="button" className="submit-btn" type="submit">
         Convert!
       </button>
     </FormStyle>
