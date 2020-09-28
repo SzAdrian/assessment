@@ -56,7 +56,7 @@ const TableContainerStyle = styled(TableContainer)`
 export default function BasicTable() {
   const [rows, setRows] = useState(null);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const rowsPerPage = 10;
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -80,7 +80,7 @@ export default function BasicTable() {
       <TableRow>
         {headers.map(() => (
           <TableCell align="right">
-            <Skeleton height={30} />
+            <Skeleton height={55} />
           </TableCell>
         ))}
       </TableRow>
@@ -130,7 +130,7 @@ export default function BasicTable() {
                     id="table-pagination"
                     rowsPerPageOptions={[]}
                     count={rows.length}
-                    rowsPerPage={10}
+                    rowsPerPage={rowsPerPage}
                     page={page}
                     onChangePage={handleChangePage}
                   />
