@@ -12,7 +12,9 @@ import { TableFooter, TablePagination } from "@material-ui/core";
 
 const TableContainerStyle = styled(TableContainer)`
   max-height: 100vh;
-
+  table {
+    height: 100vh;
+  }
   td div,
   th {
     word-break: break-word;
@@ -23,8 +25,8 @@ const TableContainerStyle = styled(TableContainer)`
     font-size: 1.2rem;
   }
   td {
-    max-width: 150px;
-    min-width: 65px;
+    min-width: 70px;
+    width: 300px;
   }
 
   td div {
@@ -35,6 +37,7 @@ const TableContainerStyle = styled(TableContainer)`
     width: 100%;
     height: 2.5rem;
     line-height: 1;
+    padding: 0.5rem 0;
   }
   tr {
     transition: background-color 0.245s ease;
@@ -57,10 +60,7 @@ export default function BasicTable() {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
+
   const headers = ["First Name", "Last Name", "Created At"];
   useEffect(() => {
     var x = new XMLHttpRequest();
