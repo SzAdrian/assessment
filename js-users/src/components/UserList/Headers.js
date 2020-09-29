@@ -9,6 +9,7 @@ function Headers({ headers }) {
           {header.label}
         </TableCell>
       ))}
+      <TableCell align="right">Lock / Unlock</TableCell>
     </TableRow>
   );
 }

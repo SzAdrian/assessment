@@ -1,7 +1,22 @@
-import { TableCell, TableRow } from "@material-ui/core";
+import { IconButton, TableCell, TableRow } from "@material-ui/core";
 import React from "react";
+import LockOpenOutlinedIcon from "@material-ui/icons/LockOpenOutlined";
+import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
+import Axios from "axios";
 
-function Rows({ page, rowsPerPage, rows, headers }) {
+function Rows({ page, rowsPerPage, rows, headers, setRows }) {
+  const handleLockChange = (row) => {
+    setRows(
+      rows.map((r) =>
+        r.id === row.id
+          ? { ...row, status: row.status === "locked" ? "active" : "locked" }
+          : r
+      )
+    );
+    Axios.put("http://js-assessment-backend.herokuapp.com/users/" + row.id, {
+      status: row.status === "locked" ? "active" : "locked",
+    });
+  };
   return (
     <>
       {(rowsPerPage > 0
@@ -9,7 +24,10 @@ function Rows({ page, rowsPerPage, rows, headers }) {
         : rows
       ).map((row) => {
         return (
-          <TableRow key={row.id}>
+          <TableRow
+            className={row.status === "locked" ? "strikethroughed" : ""}
+            key={row.id}
+          >
             {headers.map((header) => (
               <TableCell key={row.id + header.property}>
                 <div>
@@ -19,6 +37,15 @@ function Rows({ page, rowsPerPage, rows, headers }) {
                 </div>
               </TableCell>
             ))}
+            <TableCell className="lock">
+              <IconButton onClick={() => handleLockChange(row)}>
+                {row.status === "locked" ? (
+                  <LockOutlinedIcon />
+                ) : (
+                  <LockOpenOutlinedIcon />
+                )}
+              </IconButton>
+            </TableCell>
           </TableRow>
         );
       })}

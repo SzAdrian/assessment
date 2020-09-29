@@ -31,6 +31,7 @@ const TableContainerStyle = styled(TableContainer)`
   }
 
   td div {
+    white-space: break-spaces;
     display: flex;
     align-items: center;
     place-content: center;
@@ -50,6 +51,57 @@ const TableContainerStyle = styled(TableContainer)`
     * {
       overflow: hidden;
       width: auto;
+    }
+  }
+  td {
+    position: relative;
+  }
+  tr.strikethroughed td div {
+    color: #c4c4c4;
+  }
+
+  tr.strikethroughed td:before {
+    opacity: 1;
+    content: " ";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    border-bottom: 1.5px outset #c4c4c4;
+    width: 100%;
+  }
+  tr.strikethroughed td:first-child:before {
+    left: auto;
+    right: 0;
+  }
+  tr.strikethroughed td:first-child:before,
+  tr.strikethroughed td:nth-last-child(2):before {
+    width: 80%;
+  }
+  td.lock:before {
+    display: none;
+  }
+  td.lock {
+    text-align: center;
+
+    width: 100px;
+  }
+  @media screen and (max-width: 430px) {
+    .MuiTableCell-sizeSmall:last-child {
+      padding-right: 0;
+    }
+    .MuiTablePagination-spacer {
+      display: none;
+    }
+    tr,
+    td,
+    td {
+      padding: 0;
+      margin: 0;
+    }
+
+    th {
+      padding-right: 3px;
+      padding-left: 3px;
     }
   }
 `;
@@ -80,7 +132,8 @@ export default function UserList() {
     x.open(
       "GET",
       "https://cors-anywhere.herokuapp.com/" +
-        "http://js-assessment-backend.herokuapp.com/users"
+        process.env.REACT_APP_API_URL +
+        "/users"
     );
     x.onload = x.onerror = function () {
       setRows(JSON.parse(x.responseText));
@@ -103,6 +156,7 @@ export default function UserList() {
             <>
               <TableBody>
                 <Rows
+                  setRows={setRows}
                   page={page}
                   rowsPerPage={ROWS_PER_PAGE}
                   headers={headers}
