@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import styled from "styled-components";
-import Skeleton from "react-loading-skeleton";
 import { TableFooter, TablePagination } from "@material-ui/core";
+import SkeletonRows from "./SkeletonRows";
+import Headers from "./Headers";
+import Rows from "./Rows";
 
 const TableContainerStyle = styled(TableContainer)`
   max-height: 100vh;
@@ -53,16 +54,28 @@ const TableContainerStyle = styled(TableContainer)`
   }
 `;
 
-export default function BasicTable() {
+export default function UserList() {
+  console.log("render");
   const [rows, setRows] = useState(null);
   const [page, setPage] = useState(0);
-  const rowsPerPage = 10;
+  const [headers, setHeaders] = useState([]);
+  const ROWS_PER_PAGE = 10;
+
+  const createHeader = (label, property, type) => {
+    return { label, property, type };
+  };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const headers = ["First Name", "Last Name", "Created At"];
   useEffect(() => {
+    setHeaders([
+      createHeader("First Name", "first_name", "text"),
+      createHeader("Last Name", "last_name", "text"),
+      createHeader("Created At", "created_at", "date"),
+    ]);
+    //this is my solution to get around the CORS policy issues
     var x = new XMLHttpRequest();
     x.open(
       "GET",
@@ -74,55 +87,27 @@ export default function BasicTable() {
     };
     x.send();
   }, []);
-  let skeletonRows = [];
-  for (let i = 0; i < 50; ++i) {
-    skeletonRows.push(
-      <TableRow>
-        {headers.map(() => (
-          <TableCell align="right">
-            <Skeleton height={55} />
-          </TableCell>
-        ))}
-      </TableRow>
-    );
-  }
+
   return (
     <>
       <TableContainerStyle component={Paper}>
         <Table stickyHeader size="small" aria-label="sticky table">
           <TableHead>
-            <TableRow>
-              {headers.map((header) => (
-                <TableCell align="right">{header}</TableCell>
-              ))}
-            </TableRow>
+            <Headers headers={headers} />
           </TableHead>
           {rows == null ? (
-            <TableBody>{skeletonRows}</TableBody>
+            <TableBody>
+              <SkeletonRows columnCount={headers.length} rowCount={30} />
+            </TableBody>
           ) : (
             <>
               <TableBody>
-                {(rowsPerPage > 0
-                  ? rows.slice(
-                      page * rowsPerPage,
-                      page * rowsPerPage + rowsPerPage
-                    )
-                  : rows
-                ).map((row) => (
-                  <TableRow key={row.id}>
-                    <TableCell align="right">
-                      <div>{row["first_name"]}</div>
-                    </TableCell>
-                    <TableCell align="right">
-                      <div>{row["last_name"]}</div>
-                    </TableCell>
-                    <TableCell align="right">
-                      <div>
-                        {new Date(row["created_at"]).toUTCString().slice(0, -7)}
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                <Rows
+                  page={page}
+                  rowsPerPage={ROWS_PER_PAGE}
+                  headers={headers}
+                  rows={rows}
+                />
               </TableBody>
               <TableFooter>
                 <TableRow>
@@ -130,7 +115,7 @@ export default function BasicTable() {
                     id="table-pagination"
                     rowsPerPageOptions={[]}
                     count={rows.length}
-                    rowsPerPage={rowsPerPage}
+                    rowsPerPage={ROWS_PER_PAGE}
                     page={page}
                     onChangePage={handleChangePage}
                   />
