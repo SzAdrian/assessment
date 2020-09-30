@@ -6,16 +6,39 @@ import Axios from "axios";
 
 function Rows({ page, rowsPerPage, rows, headers, setRows }) {
   const handleLockChange = (row) => {
-    setRows(
-      rows.map((r) =>
-        r.id === row.id
-          ? { ...row, status: row.status === "locked" ? "active" : "locked" }
-          : r
-      )
+    var x = new XMLHttpRequest();
+    x.open(
+      "PUT",
+      "https://cors-anywhere.herokuapp.com/" +
+        process.env.REACT_APP_API_URL +
+        "/users/" +
+        row.id
     );
-    Axios.put("http://js-assessment-backend.herokuapp.com/users/" + row.id, {
-      status: row.status === "locked" ? "active" : "locked",
-    });
+    x.setRequestHeader("Content-Type", "application/json");
+
+    x.onload = x.onerror = function () {
+      if (Math.floor(x.status / 100) === 2) {
+        setRows(
+          rows.map((r) =>
+            r.id === row.id
+              ? {
+                  ...row,
+                  status: row.status === "locked" ? "active" : "locked",
+                }
+              : r
+          )
+        );
+      } else {
+        console.log(x.responseText);
+      }
+    };
+    x.send(
+      JSON.stringify({ status: row.status === "locked" ? "active" : "locked" })
+    );
+
+    //Axios.put("http://js-assessment-backend.herokuapp.com/users/" + row.id, {
+    //  status: row.status === "locked" ? "active" : "locked",
+    //});
   };
   return (
     <>
