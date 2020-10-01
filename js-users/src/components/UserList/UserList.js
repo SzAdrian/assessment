@@ -53,7 +53,6 @@ const TableContainerStyle = styled(TableContainer)`
   }
   tr {
     transition: background-color 0.245s ease;
-    cursor: pointer;
     :hover {
       background-color: #80808030;
     }

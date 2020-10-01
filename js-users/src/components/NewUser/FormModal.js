@@ -13,6 +13,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../Contexts/AppContext";
 import Skeleton from "react-loading-skeleton";
+import { EditAttributesRounded } from "@material-ui/icons";
 
 const ModalStyled = styled.div`
   display: block;
@@ -117,6 +118,7 @@ function FormModal(props) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
   const { rows, setRows } = useContext(AppContext);
   const history = useHistory();
 
@@ -156,81 +158,97 @@ function FormModal(props) {
     history.push("/user-table");
   };
   const title = props.match.params.uid ? "Edit User" : "Add New User";
+  const editUser = () => {
+    var x = new XMLHttpRequest();
+    x.open(
+      "PUT",
+      "https://cors-anywhere.herokuapp.com/" +
+        process.env.REACT_APP_API_URL +
+        "/users/" +
+        props.match.params.uid
+    );
+    x.setRequestHeader("Content-Type", "application/json");
+
+    x.onload = x.onerror = function () {
+      setLoading(false);
+      if (Math.floor(x.status / 100) === 2) {
+        setErrors({});
+        setRows(
+          rows.map((r) =>
+            r.id == props.match.params.uid
+              ? {
+                  ...r,
+                  first_name: firstName,
+                  last_name: lastName,
+                  status: status,
+                  updated_at: new Date().toISOString(),
+                }
+              : r
+          )
+        );
+      } else if (Math.floor(x.status / 100) === 4) {
+        handleErrorMessages(JSON.parse(x.responseText));
+      } else {
+        console.log(x.responseText);
+      }
+    };
+    x.onloadstart = function () {
+      setLoading(true);
+    };
+    x.send(
+      JSON.stringify({
+        first_name: firstName,
+        last_name: lastName,
+        status: status,
+      })
+    );
+  };
+  const addNewUser = () => {
+    var x = new XMLHttpRequest();
+    x.open(
+      "POST",
+      "https://cors-anywhere.herokuapp.com/" +
+        process.env.REACT_APP_API_URL +
+        "/users"
+    );
+    x.setRequestHeader("Content-Type", "application/json");
+
+    x.onload = x.onerror = function () {
+      setLoading(false);
+      if (Math.floor(x.status / 100) === 2) {
+        setErrors({});
+        setRows([JSON.parse(x.responseText), ...rows]);
+        setFirstName("");
+        setLastName("");
+        setStatus("active");
+      } else if (Math.floor(x.status / 100) === 4) {
+        handleErrorMessages(JSON.parse(x.responseText));
+      } else {
+        console.log(x.responseText);
+      }
+    };
+    x.onloadstart = function () {
+      setLoading(true);
+    };
+    x.send(
+      JSON.stringify({
+        first_name: firstName,
+        last_name: lastName,
+        status: status,
+      })
+    );
+  };
+
+  const handleErrorMessages = (errors) => {
+    setErrors({ ...errors });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (props.match.params.uid) {
-      var x = new XMLHttpRequest();
-      x.open(
-        "PUT",
-        "https://cors-anywhere.herokuapp.com/" +
-          process.env.REACT_APP_API_URL +
-          "/users/" +
-          props.match.params.uid
-      );
-      x.setRequestHeader("Content-Type", "application/json");
-
-      x.onload = x.onerror = function () {
-        setLoading(false);
-        if (Math.floor(x.status / 100) === 2) {
-          setRows(
-            rows.map((r) =>
-              r.id == props.match.params.uid
-                ? {
-                    ...r,
-                    first_name: firstName,
-                    last_name: lastName,
-                    status: status,
-                    updated_at: new Date().toISOString(),
-                  }
-                : r
-            )
-          );
-        } else {
-          console.log(x.responseText);
-        }
-      };
-      x.onloadstart = function () {
-        setLoading(true);
-      };
-      x.send(
-        JSON.stringify({
-          first_name: firstName,
-          last_name: lastName,
-          status: status,
-        })
-      );
+      editUser();
     } else {
-      var x = new XMLHttpRequest();
-      x.open(
-        "POST",
-        "https://cors-anywhere.herokuapp.com/" +
-          process.env.REACT_APP_API_URL +
-          "/users"
-      );
-      x.setRequestHeader("Content-Type", "application/json");
-
-      x.onload = x.onerror = function () {
-        setLoading(false);
-        if (Math.floor(x.status / 100) === 2) {
-          setRows([JSON.parse(x.responseText), ...rows]);
-          setFirstName("");
-          setLastName("");
-          setStatus("active");
-        } else {
-          console.log(x.responseText);
-        }
-      };
-      x.onloadstart = function () {
-        setLoading(true);
-      };
-      x.send(
-        JSON.stringify({
-          first_name: firstName,
-          last_name: lastName,
-          status: status,
-        })
-      );
+      addNewUser();
     }
   };
 
@@ -261,10 +279,15 @@ function FormModal(props) {
               <>
                 <TextField
                   onChange={(e) => setFirstName(e.target.value)}
-                  required
                   id="first_name_input"
                   label="First Name"
                   multiline
+                  error={errors.first_name}
+                  helperText={
+                    errors.first_name
+                      ? errors.first_name.toString().toUpperCase()
+                      : ""
+                  }
                   rowsMax={4}
                   variant="outlined"
                   value={firstName}
@@ -272,10 +295,15 @@ function FormModal(props) {
                 />
                 <TextField
                   onChange={(e) => setLastName(e.target.value)}
-                  required
                   id="last_name_input"
                   label="Last Name"
                   multiline
+                  error={errors.last_name}
+                  helperText={
+                    errors.last_name
+                      ? errors.last_name.toString().toUpperCase()
+                      : ""
+                  }
                   rowsMax={4}
                   variant="outlined"
                   value={lastName}
