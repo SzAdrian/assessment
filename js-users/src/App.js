@@ -9,6 +9,7 @@ function App() {
     <AppContextProvider>
       <Router>
         <Route exact path="/new" component={NewUser} />
+        <Route exact path="/edit/:uid" component={NewUser} />
         <Route path={["/", "/user-list"]} component={UserList} />
       </Router>
     </AppContextProvider>
