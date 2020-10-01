@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableContainer from "@material-ui/core/TableContainer";
@@ -6,10 +6,19 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import styled from "styled-components";
-import { TableFooter, TablePagination } from "@material-ui/core";
+import {
+  Fab,
+  IconButton,
+  TableFooter,
+  TablePagination,
+} from "@material-ui/core";
 import SkeletonRows from "./SkeletonRows";
 import Headers from "./Headers";
 import Rows from "./Rows";
+import AddIcon from "@material-ui/icons/Add";
+import { useHistory } from "react-router-dom";
+import { AppContext } from "../Contexts/AppContext";
+import PaginationActions from "./PaginationActions";
 
 const TableContainerStyle = styled(TableContainer)`
   max-height: 100vh;
@@ -29,24 +38,27 @@ const TableContainerStyle = styled(TableContainer)`
     min-width: 70px;
     width: 300px;
   }
+  .MuiCircularProgress-root {
+    display: block;
+  }
 
-  td div {
+  tbody td div {
     white-space: break-spaces;
-    display: flex;
-    align-items: center;
-    place-content: center;
+    margin: auto;
     overflow: auto;
-    width: 100%;
-    height: 2.5rem;
+    max-width: max-content;
+    max-height: 2.5rem;
     line-height: 1;
     padding: 0.5rem 0;
   }
   tr {
     transition: background-color 0.245s ease;
+    cursor: pointer;
     :hover {
       background-color: #80808030;
     }
   }
+
   .MuiTablePagination-root {
     * {
       overflow: hidden;
@@ -58,6 +70,10 @@ const TableContainerStyle = styled(TableContainer)`
   }
   tr.strikethroughed td div {
     color: #c4c4c4;
+  }
+  .MuiCircularProgress-colorPrimary,
+  tr.strikethroughed td .MuiCircularProgress-root {
+    color: #3f51b5;
   }
 
   tr.strikethroughed td:before {
@@ -81,22 +97,44 @@ const TableContainerStyle = styled(TableContainer)`
     display: none;
   }
   td.lock {
+    max-height: none;
     text-align: center;
-
+    text-align: -webkit-center;
+    text-align: -moz-center;
     width: 100px;
   }
-  @media screen and (max-width: 430px) {
+
+  .MuiFab-root {
+    z-index: 500;
+    position: absolute;
+    left: 2%;
+    bottom: 3%;
+  }
+
+  .pagination-actions {
+    flex-shrink: 0;
+  }
+
+  /*desktop first approach*/
+  @media only screen and (hover: none) and (pointer: coarse),
+    (max-width: 430px) {
+    .MuiFab-root {
+      position: fixed;
+      left: 2%;
+      bottom: 1%;
+      width: 3rem;
+      height: 3rem;
+    }
     .MuiTableCell-sizeSmall:last-child {
       padding-right: 0;
     }
-    .MuiTablePagination-spacer {
-      display: none;
-    }
     tr,
-    td,
     td {
-      padding: 0;
+      padding: 0.2rem;
       margin: 0;
+    }
+    tbody td div {
+      display: block;
     }
 
     th {
@@ -107,12 +145,11 @@ const TableContainerStyle = styled(TableContainer)`
 `;
 
 export default function UserList() {
-  console.log("render");
-  const [rows, setRows] = useState(null);
+  const { rows, setRows } = useContext(AppContext);
   const [page, setPage] = useState(0);
   const [headers, setHeaders] = useState([]);
   const ROWS_PER_PAGE = 10;
-
+  const history = useHistory();
   const createHeader = (label, property, type) => {
     return { label, property, type };
   };
@@ -120,7 +157,6 @@ export default function UserList() {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   useEffect(() => {
     setHeaders([
       createHeader("First Name", "first_name", "text"),
@@ -139,7 +175,7 @@ export default function UserList() {
       setRows(JSON.parse(x.responseText));
     };
     x.send();
-  }, []);
+  }, [setRows]);
 
   return (
     <>
@@ -172,12 +208,21 @@ export default function UserList() {
                     rowsPerPage={ROWS_PER_PAGE}
                     page={page}
                     onChangePage={handleChangePage}
+                    ActionsComponent={PaginationActions}
                   />
                 </TableRow>
               </TableFooter>
             </>
           )}
         </Table>
+        <Fab
+          onClick={() => history.push("/new")}
+          id="add-user"
+          color="primary"
+          aria-label="add"
+        >
+          <AddIcon />
+        </Fab>
       </TableContainerStyle>
     </>
   );
