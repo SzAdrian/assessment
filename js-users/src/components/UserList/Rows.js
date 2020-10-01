@@ -1,45 +1,10 @@
-import { IconButton, TableCell, TableRow } from "@material-ui/core";
+import { TableCell, TableRow } from "@material-ui/core";
 import React from "react";
-import LockOpenOutlinedIcon from "@material-ui/icons/LockOpenOutlined";
-import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
-import Axios from "axios";
-
+import { useHistory } from "react-router-dom";
+import LockButton from "./LockButton";
+import MoreMenu from "./MoreMenu";
 function Rows({ page, rowsPerPage, rows, headers, setRows }) {
-  const handleLockChange = (row) => {
-    var x = new XMLHttpRequest();
-    x.open(
-      "PUT",
-      "https://cors-anywhere.herokuapp.com/" +
-        process.env.REACT_APP_API_URL +
-        "/users/" +
-        row.id
-    );
-    x.setRequestHeader("Content-Type", "application/json");
-
-    x.onload = x.onerror = function () {
-      if (Math.floor(x.status / 100) === 2) {
-        setRows(
-          rows.map((r) =>
-            r.id === row.id
-              ? {
-                  ...row,
-                  status: row.status === "locked" ? "active" : "locked",
-                }
-              : r
-          )
-        );
-      } else {
-        console.log(x.responseText);
-      }
-    };
-    x.send(
-      JSON.stringify({ status: row.status === "locked" ? "active" : "locked" })
-    );
-
-    //Axios.put("http://js-assessment-backend.herokuapp.com/users/" + row.id, {
-    //  status: row.status === "locked" ? "active" : "locked",
-    //});
-  };
+  const history = useHistory();
   return (
     <>
       {(rowsPerPage > 0
@@ -61,13 +26,7 @@ function Rows({ page, rowsPerPage, rows, headers, setRows }) {
               </TableCell>
             ))}
             <TableCell className="lock">
-              <IconButton onClick={() => handleLockChange(row)}>
-                {row.status === "locked" ? (
-                  <LockOutlinedIcon />
-                ) : (
-                  <LockOpenOutlinedIcon />
-                )}
-              </IconButton>
+              <MoreMenu row={row} />
             </TableCell>
           </TableRow>
         );
