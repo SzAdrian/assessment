@@ -5,11 +5,9 @@ function Headers({ headers }) {
   return (
     <TableRow>
       {headers.map((header, i) => (
-        <TableCell key={i} align="right">
-          {header.label}
-        </TableCell>
+        <TableCell key={i}>{header.label}</TableCell>
       ))}
-      <TableCell align="right">Lock / Unlock</TableCell>
+      <TableCell></TableCell>
     </TableRow>
   );
 }
