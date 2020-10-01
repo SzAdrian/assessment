@@ -20,7 +20,9 @@ function Rows({ page, rowsPerPage, rows, headers, setRows }) {
               <TableCell key={row.id + header.property}>
                 <div>
                   {header.type === "date"
-                    ? new Date(row[header.property]).toUTCString().slice(0, -7)
+                    ? new Date(row[header.property]).toLocaleDateString() +
+                      " " +
+                      new Date(row[header.property]).toLocaleTimeString()
                     : row[header.property]}
                 </div>
               </TableCell>
