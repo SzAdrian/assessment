@@ -19,7 +19,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../Contexts/AppContext";
 import PaginationActions from "./PaginationActions";
-
+import Axios from "axios";
 const TableContainerStyle = styled(TableContainer)`
   max-height: 100vh;
   table {
@@ -162,18 +162,11 @@ export default function UserList() {
       createHeader("Last Name", "last_name", "text"),
       createHeader("Created At", "created_at", "date"),
     ]);
-    //this is my solution to get around the CORS policy issues
-    var x = new XMLHttpRequest();
-    x.open(
-      "GET",
-      "https://cors-anywhere.herokuapp.com/" +
-        process.env.REACT_APP_API_URL +
-        "/users"
-    );
-    x.onload = x.onerror = function () {
-      setRows(JSON.parse(x.responseText));
-    };
-    x.send();
+
+    fetch(process.env.REACT_APP_API_URL + "/users")
+      .then((resp) => resp.json())
+      .then((json) => setRows(json))
+      .catch((err) => console.log(err));
   }, [setRows]);
 
   return (

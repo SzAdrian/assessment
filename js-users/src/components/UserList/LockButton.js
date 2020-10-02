@@ -11,39 +11,32 @@ function LockButton({ row }) {
   const { rows, setRows } = useContext(AppContext);
 
   const handleLockChange = (row) => {
-    var x = new XMLHttpRequest();
-    x.open(
-      "PUT",
-      "https://cors-anywhere.herokuapp.com/" +
-        process.env.REACT_APP_API_URL +
-        "/users/" +
-        row.id
-    );
-    x.setRequestHeader("Content-Type", "application/json");
-
-    x.onload = x.onerror = function () {
-      setLoading(false);
-      if (Math.floor(x.status / 100) === 2) {
-        setRows(
-          rows.map((r) =>
-            r.id === row.id
-              ? {
-                  ...row,
-                  status: row.status === "locked" ? "active" : "locked",
-                }
-              : r
-          )
-        );
-      } else {
-        console.log(x.responseText);
-      }
-    };
-    x.onloadstart = function () {
-      setLoading(true);
-    };
-    x.send(
-      JSON.stringify({ status: row.status === "locked" ? "active" : "locked" })
-    );
+    setLoading(true);
+    fetch(process.env.REACT_APP_API_URL + "/users/" + row.id, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        status: row.status === "locked" ? "active" : "locked",
+      }),
+    })
+      .then((resp) => {
+        setLoading(false);
+        if (resp.ok) {
+          setRows(
+            rows.map((r) =>
+              r.id === row.id
+                ? {
+                    ...row,
+                    status: row.status === "locked" ? "active" : "locked",
+                  }
+                : r
+            )
+          );
+        }
+      })
+      .catch((err) => console.log(err));
   };
   return (
     <>

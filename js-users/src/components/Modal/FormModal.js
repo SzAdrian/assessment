@@ -13,8 +13,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../Contexts/AppContext";
 import Skeleton from "react-loading-skeleton";
-import { EditAttributesRounded } from "@material-ui/icons";
-
+import _ from "lodash";
 const ModalStyled = styled.div`
   display: block;
   position: fixed;
@@ -123,33 +122,32 @@ function FormModal(props) {
   const history = useHistory();
 
   useEffect(() => {
-    if (props.match.params.uid) {
-      var x = new XMLHttpRequest();
-      x.open(
-        "GET",
-        "https://cors-anywhere.herokuapp.com/" +
-          process.env.REACT_APP_API_URL +
-          "/users/" +
-          props.match.params.uid
-      );
-      x.onloadstart = function () {
-        setLoadingUser(true);
-      };
-      x.onload = x.onerror = function () {
-        setLoadingUser(false);
-        if (Math.floor(x.status / 100) === 2) {
-          let user = JSON.parse(x.responseText);
-          setUser(user);
-          setStatus(user ? user.status : "active");
-          setFirstName(user ? user["first_name"] : "");
-          setLastName(user ? user["last_name"] : "");
-        } else {
-          history.push("/user-list");
-        }
-      };
-      x.send();
+    let uid = props.match.params.uid;
+    if (uid) {
+      setLoadingUser(true);
+      fetch(process.env.REACT_APP_API_URL + "/users/" + uid)
+        .then((resp) => {
+          if (resp.ok) {
+            return resp.json();
+          } else {
+            setUser(null);
+            history.push("/");
+          }
+        })
+        .then((json) => {
+          setLoadingUser(false);
+          setUser(json);
+        })
+        .catch((err) => console.log(err));
     }
-  }, [history, props.match.params]);
+  }, [history]);
+
+  useEffect(() => {
+    setStatus(user !== null ? user.status : "active");
+    setFirstName(user !== null ? user.first_name : "");
+    setLastName(user !== null ? user.last_name : "");
+  }, [user]);
+
   const handleChange = (event) => {
     setStatus(event.target.value);
   };
@@ -158,89 +156,76 @@ function FormModal(props) {
     history.push("/user-table");
   };
   const title = props.match.params.uid ? "Edit User" : "Add New User";
-  const editUser = () => {
-    var x = new XMLHttpRequest();
-    x.open(
-      "PUT",
-      "https://cors-anywhere.herokuapp.com/" +
-        process.env.REACT_APP_API_URL +
-        "/users/" +
-        props.match.params.uid
-    );
-    x.setRequestHeader("Content-Type", "application/json");
 
-    x.onload = x.onerror = function () {
-      setLoading(false);
-      if (Math.floor(x.status / 100) === 2) {
-        setErrors({});
-        setRows(
-          rows.map((r) =>
-            r.id == props.match.params.uid
-              ? {
-                  ...r,
-                  first_name: firstName,
-                  last_name: lastName,
-                  status: status,
-                  updated_at: new Date().toISOString(),
-                }
-              : r
-          )
-        );
-      } else if (Math.floor(x.status / 100) === 4) {
-        handleErrorMessages(JSON.parse(x.responseText));
-      } else {
-        console.log(x.responseText);
-      }
-    };
-    x.onloadstart = function () {
-      setLoading(true);
-    };
-    x.send(
-      JSON.stringify({
+  const EditUserInRows = (uid) =>
+    rows.map((r) =>
+      r.id == uid
+        ? {
+            ...r,
+            first_name: firstName,
+            last_name: lastName,
+            status: status,
+            updated_at: new Date().toISOString(),
+          }
+        : r
+    );
+  const editUser = () => {
+    let uid = props.match.params.uid;
+    setLoading(true);
+    fetch(process.env.REACT_APP_API_URL + "/users/" + uid, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         first_name: firstName,
         last_name: lastName,
         status: status,
+      }),
+    })
+      .then((resp) => {
+        setLoading(false);
+        if (resp.ok) {
+          setErrors({});
+          setRows(EditUserInRows(uid));
+        } else {
+          return resp.json();
+        }
       })
-    );
+      .then((json) => setErrors({ ...json }))
+      .catch((err) => console.log(err));
   };
   const addNewUser = () => {
-    var x = new XMLHttpRequest();
-    x.open(
-      "POST",
-      "https://cors-anywhere.herokuapp.com/" +
-        process.env.REACT_APP_API_URL +
-        "/users"
-    );
-    x.setRequestHeader("Content-Type", "application/json");
-
-    x.onload = x.onerror = function () {
-      setLoading(false);
-      if (Math.floor(x.status / 100) === 2) {
-        setErrors({});
-        setRows([JSON.parse(x.responseText), ...rows]);
-        setFirstName("");
-        setLastName("");
-        setStatus("active");
-      } else if (Math.floor(x.status / 100) === 4) {
-        handleErrorMessages(JSON.parse(x.responseText));
-      } else {
-        console.log(x.responseText);
-      }
-    };
-    x.onloadstart = function () {
-      setLoading(true);
-    };
-    x.send(
-      JSON.stringify({
+    setLoading(true);
+    fetch(process.env.REACT_APP_API_URL + "/users/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
         first_name: firstName,
         last_name: lastName,
         status: status,
+      }),
+    })
+      .then((resp) => {
+        setLoading(false);
+        if (!resp.ok) {
+          resp.json().then((data) => setErrors({ ...data }));
+        } else {
+          resp.json().then((data) => {
+            console.log(data);
+            console.log("success");
+            setErrors({});
+            setRows([{ ...data }, rows]);
+            setFirstName("");
+            setLastName("");
+            setStatus("active");
+          });
+        }
       })
-    );
-  };
 
-  const handleErrorMessages = (errors) => {
-    setErrors({ ...errors });
+      .catch((err) => console.log(err));
   };
 
   const handleSubmit = (e) => {
@@ -282,7 +267,7 @@ function FormModal(props) {
                   id="first_name_input"
                   label="First Name"
                   multiline
-                  error={errors.first_name}
+                  error={_.has(errors, "first_name")}
                   helperText={
                     errors.first_name
                       ? errors.first_name.toString().toUpperCase()
@@ -298,7 +283,7 @@ function FormModal(props) {
                   id="last_name_input"
                   label="Last Name"
                   multiline
-                  error={errors.last_name}
+                  error={_.has(errors, "last_name")}
                   helperText={
                     errors.last_name
                       ? errors.last_name.toString().toUpperCase()
