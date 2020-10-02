@@ -214,8 +214,6 @@ function FormModal(props) {
           resp.json().then((data) => setErrors({ ...data }));
         } else {
           resp.json().then((data) => {
-            console.log(data);
-            console.log("success");
             setErrors({});
             setRows([{ ...data }, rows]);
             setFirstName("");
@@ -276,7 +274,6 @@ function FormModal(props) {
                   rowsMax={4}
                   variant="outlined"
                   value={firstName}
-                  defaultValue={firstName}
                 />
                 <TextField
                   onChange={(e) => setLastName(e.target.value)}
@@ -292,7 +289,6 @@ function FormModal(props) {
                   rowsMax={4}
                   variant="outlined"
                   value={lastName}
-                  defaultValue={lastName}
                 />
                 <TextField
                   id="status-select"

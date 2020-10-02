@@ -13,6 +13,10 @@ const MenuStyle = styled(Menu)`
     display: flex;
     flex-direction: column;
   }
+  .MuiButton-root {
+    width: 100%;
+    justify-content: space-around;
+  }
 `;
 export default function MoreMenu({ row }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -43,9 +47,14 @@ export default function MoreMenu({ row }) {
         onClose={handleClose}
         TransitionComponent={Fade}
       >
-        <LockButton row={row} />
+        <MenuItem>
+          {" "}
+          <LockButton row={row} />
+        </MenuItem>
 
-        <EditButton handleClose={handleClose} uid={row.id} />
+        <MenuItem>
+          <EditButton handleClose={handleClose} uid={row.id} />
+        </MenuItem>
       </MenuStyle>
     </>
   );
