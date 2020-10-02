@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import AppContextProvider from "./components/Contexts/AppContext";
-import FormModal from "./components/NewUser/FormModal";
+import FormModal from "./components/Modal/FormModal";
 import UserList from "./components/UserList/UserList";
 
 function App() {
