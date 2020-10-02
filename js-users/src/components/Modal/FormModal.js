@@ -140,7 +140,7 @@ function FormModal(props) {
         })
         .catch((err) => console.log(err));
     }
-  }, [history]);
+  }, [history, props.match.params.uid]);
 
   useEffect(() => {
     setStatus(user !== null ? user.status : "active");
@@ -159,7 +159,7 @@ function FormModal(props) {
 
   const EditUserInRows = (uid) =>
     rows.map((r) =>
-      r.id == uid
+      r.id.toString() === uid
         ? {
             ...r,
             first_name: firstName,
@@ -242,7 +242,7 @@ function FormModal(props) {
       <Slide
         direction="down"
         in={["new", "edit"].includes(
-          history.location.pathname.replace(/^\/([^\/]*).*$/, "$1")
+          history.location.pathname.replace(/^\/([^/]*).*$/, "$1")
         )}
       >
         <div className="modal-content">

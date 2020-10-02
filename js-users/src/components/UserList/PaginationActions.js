@@ -24,7 +24,7 @@ function PaginationActions(props) {
   };
 
   return (
-    <div class="pagination-actions">
+    <div className="pagination-actions">
       <IconButton
         onClick={handleFirstPageButtonClick}
         disabled={page === 0}

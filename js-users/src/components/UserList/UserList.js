@@ -6,12 +6,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import styled from "styled-components";
-import {
-  Fab,
-  IconButton,
-  TableFooter,
-  TablePagination,
-} from "@material-ui/core";
+import { Fab, TableFooter, TablePagination } from "@material-ui/core";
 import SkeletonRows from "./SkeletonRows";
 import Headers from "./Headers";
 import Rows from "./Rows";
@@ -19,7 +14,6 @@ import AddIcon from "@material-ui/icons/Add";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../Contexts/AppContext";
 import PaginationActions from "./PaginationActions";
-import Axios from "axios";
 const TableContainerStyle = styled(TableContainer)`
   max-height: 100vh;
   table {

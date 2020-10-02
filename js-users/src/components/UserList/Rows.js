@@ -1,10 +1,8 @@
 import { TableCell, TableRow } from "@material-ui/core";
 import React from "react";
-import { useHistory } from "react-router-dom";
-import LockButton from "./LockButton";
 import MoreMenu from "./MoreMenu";
+
 function Rows({ page, rowsPerPage, rows, headers, setRows }) {
-  const history = useHistory();
   return (
     <>
       {(rowsPerPage > 0
@@ -27,8 +25,8 @@ function Rows({ page, rowsPerPage, rows, headers, setRows }) {
                 </div>
               </TableCell>
             ))}
-            <TableCell className="lock">
-              <MoreMenu row={row} />
+            <TableCell key={row.id + "more-menu-cell"} className="lock">
+              <MoreMenu key={row.id + "more-menu"} row={row} />
             </TableCell>
           </TableRow>
         );
