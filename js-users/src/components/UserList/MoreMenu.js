@@ -17,6 +17,9 @@ const MenuStyle = styled(Menu)`
     width: 100%;
     justify-content: space-around;
   }
+  li.MuiListItem-root {
+    padding: 0;
+  }
 `;
 export default function MoreMenu({ row }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -47,12 +50,12 @@ export default function MoreMenu({ row }) {
         onClose={handleClose}
         TransitionComponent={Fade}
       >
-        <MenuItem>
+        <MenuItem disableGutters={true}>
           {" "}
           <LockButton row={row} />
         </MenuItem>
 
-        <MenuItem>
+        <MenuItem disableGutters={true}>
           <EditButton handleClose={handleClose} uid={row.id} />
         </MenuItem>
       </MenuStyle>
