@@ -7,13 +7,14 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import CloseIcon from "@material-ui/icons/Close";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../Contexts/AppContext";
 import Skeleton from "react-loading-skeleton";
 import _ from "lodash";
+import Axios from "axios";
 const ModalStyled = styled.div`
   display: block;
   position: fixed;
@@ -120,27 +121,27 @@ function FormModal(props) {
   const [errors, setErrors] = useState({});
   const { rows, setRows } = useContext(AppContext);
   const history = useHistory();
-
-  useEffect(() => {
-    let uid = props.match.params.uid;
-    if (uid) {
+  const loadUser = useCallback(
+    (uid) => {
       setLoadingUser(true);
-      fetch(process.env.REACT_APP_API_URL + "/users/" + uid)
+      Axios.get(process.env.REACT_APP_API_URL + "/users/" + uid + ".json")
         .then((resp) => {
-          if (resp.ok) {
-            return resp.json();
-          } else {
-            setUser(null);
-            history.push("/");
-          }
-        })
-        .then((json) => {
           setLoadingUser(false);
-          setUser(json);
+          setUser(resp.data);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          setUser(null);
+          history.push("/");
+        });
+    },
+    [history]
+  );
+  useEffect(() => {
+    if (props.match.params.uid) {
+      loadUser(props.match.params.uid);
     }
-  }, [history, props.match.params.uid]);
+  }, [props.match.params.uid, loadUser]);
 
   useEffect(() => {
     setStatus(user !== null ? user.status : "active");
@@ -169,9 +170,11 @@ function FormModal(props) {
           }
         : r
     );
+
   const editUser = () => {
     let uid = props.match.params.uid;
     setLoading(true);
+
     fetch(process.env.REACT_APP_API_URL + "/users/" + uid, {
       method: "PUT",
       headers: {
@@ -215,7 +218,7 @@ function FormModal(props) {
         } else {
           resp.json().then((data) => {
             setErrors({});
-            setRows([{ ...data }, rows]);
+            setRows([{ ...data }, ...rows]);
             setFirstName("");
             setLastName("");
             setStatus("active");

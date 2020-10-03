@@ -14,6 +14,7 @@ import AddIcon from "@material-ui/icons/Add";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../Contexts/AppContext";
 import PaginationActions from "./PaginationActions";
+import Axios from "axios";
 const TableContainerStyle = styled(TableContainer)`
   max-height: 100vh;
   table {
@@ -157,10 +158,9 @@ export default function UserList() {
       createHeader("Created At", "created_at", "date"),
     ]);
 
-    fetch(process.env.REACT_APP_API_URL + "/users")
-      .then((resp) => resp.json())
-      .then((json) => setRows(json))
-      .catch((err) => console.log(err));
+    Axios.get(process.env.REACT_APP_API_URL + "/users.json").then(({ data }) =>
+      setRows(data)
+    );
   }, [setRows]);
 
   return (
