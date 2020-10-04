@@ -10,7 +10,6 @@ import { TableFooter, TablePagination } from "@material-ui/core";
 import SkeletonRows from "./SkeletonRows";
 import Headers from "./Headers";
 import Rows from "./Rows";
-import { useHistory } from "react-router-dom";
 import { AppContext } from "../Contexts/AppContext";
 import PaginationActions from "./PaginationActions";
 import Axios from "axios";
@@ -143,7 +142,6 @@ export default function UserList() {
   const [page, setPage] = useState(0);
   const [headers, setHeaders] = useState([]);
   const ROWS_PER_PAGE = 10;
-  const history = useHistory();
   const createHeader = (label, property, type) => {
     return { label, property, type };
   };
