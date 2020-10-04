@@ -246,13 +246,18 @@ function FormModal(props) {
           history.location.pathname.replace(/^\/([^/]*).*$/, "$1")
         )}
       >
-        <div className="modal-content">
+        <div data-testid="modal-content" className="modal-content">
           <IconButton onClick={handleClose} id="close">
             <CloseIcon />
           </IconButton>
 
           <form onSubmit={handleSubmit} className="input-container">
-            <Typography className="title" variant="h4" component="h4">
+            <Typography
+              data-testid="modal-title"
+              className="title"
+              variant="h4"
+              component="h4"
+            >
               {title}
             </Typography>
             {loadingUser ? (

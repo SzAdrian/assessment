@@ -6,15 +6,15 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import styled from "styled-components";
-import { Fab, TableFooter, TablePagination } from "@material-ui/core";
+import { TableFooter, TablePagination } from "@material-ui/core";
 import SkeletonRows from "./SkeletonRows";
 import Headers from "./Headers";
 import Rows from "./Rows";
-import AddIcon from "@material-ui/icons/Add";
 import { useHistory } from "react-router-dom";
 import { AppContext } from "../Contexts/AppContext";
 import PaginationActions from "./PaginationActions";
 import Axios from "axios";
+import AddUserButton from "./AddUserButton";
 const TableContainerStyle = styled(TableContainer)`
   max-height: 100vh;
   table {
@@ -201,14 +201,7 @@ export default function UserList() {
             </>
           )}
         </Table>
-        <Fab
-          onClick={() => history.push("/new")}
-          id="add-user"
-          color="primary"
-          aria-label="add"
-        >
-          <AddIcon />
-        </Fab>
+        <AddUserButton />
       </TableContainerStyle>
     </>
   );

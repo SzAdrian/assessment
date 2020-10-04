@@ -36,6 +36,8 @@ export default function MoreMenu({ row }) {
   return (
     <>
       <IconButton
+        id={row.id}
+        data-testid={"more-menu-button"}
         className="lock"
         aria-controls="more-menu"
         aria-haspopup="true"
@@ -44,6 +46,7 @@ export default function MoreMenu({ row }) {
         <MoreHorizIcon />
       </IconButton>
       <MenuStyle
+        data-testid={"more-menu-list" + row.id}
         anchorEl={anchorEl}
         open={open}
         keepMounted
@@ -52,11 +55,15 @@ export default function MoreMenu({ row }) {
       >
         <MenuItem disableGutters={true}>
           {" "}
-          <LockButton row={row} />
+          <LockButton data-testid={"more-menu-lock-button"} row={row} />
         </MenuItem>
 
         <MenuItem disableGutters={true}>
-          <EditButton handleClose={handleClose} uid={row.id} />
+          <EditButton
+            data-testid="more-menu-edit-button"
+            handleClose={handleClose}
+            uid={row.id}
+          />
         </MenuItem>
       </MenuStyle>
     </>
